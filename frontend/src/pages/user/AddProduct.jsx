@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
+ 
 import DashboardSidebar from '../../components/layout/DashboardSidebar';
 import { Upload, Tag, DollarSign, Package } from 'lucide-react';
 

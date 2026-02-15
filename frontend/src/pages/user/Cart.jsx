@@ -21,9 +21,7 @@ import {
   Store,
   Info
 } from 'lucide-react';
-import Header from '../../components/layout/Header';
-import Footer from '../../components/layout/Footer';
-
+ 
 const CartPage = ({ user }) => {
   // Mock cart data with campus-specific items
   const [cartItems, setCartItems] = useState([

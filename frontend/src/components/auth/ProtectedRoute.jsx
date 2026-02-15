@@ -40,8 +40,8 @@ const ProtectedRoute = ({
   // Check if authentication is required
   if (requireAuth && !isAuthenticated) {
     // Redirect to login, save the attempted location for post-login redirect
-    return <Navigate to={fallbackPath} state={{ from: location.pathname }} replace />;
-  }
+// Pass the full location object as the 'from' state
+return <Navigate to="/login" state={{ from: location }} replace />;  }
 
   // Check if specific roles are required
   if (requiredRoles.length > 0 && isAuthenticated) {
