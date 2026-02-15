@@ -15,40 +15,24 @@ import Register from "./pages/auth/Register.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
-import ListingPage from "./pages/root/Listings.jsx";
-import HomePage from "./pages/root/Home.jsx";
+
+// Root Pages
+import Home from "./pages/root/Home.jsx";          // Fixed: Home.jsx exists, not HomePage.jsx
+import Listings from "./pages/root/Listings.jsx";  // Fixed: Listings.jsx exists
+
+// User Pages
+import Cart from "./pages/user/Cart.jsx";                    // Cart.jsx exists
+import Checkout from "./pages/user/Checkout.jsx";            // Checkout.jsx exists
+import AddProduct from "./pages/user/AddProduct.jsx";        // AddProduct.jsx exists
+import TransactionHistory from "./pages/user/TransactionHistory.jsx";  // Exists
+import Profile from "./pages/user/Profile.jsx";              // Profile.jsx exists
+import Dashboard from "./pages/user/Dashboard.jsx";          // Dashboard.jsx exists
+
+// These don't exist in your structure yet - commented out
+// import HomePage from "./pages/HomePage.jsx";  // This file doesn't exist
+// import ListingPage from "./pages/root/Listings.jsx";  // Duplicate of Listings
 
 // Temporary placeholder pages
- 
-
-const BrowseListings = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Browse Listings</h1>
-    <p className="mt-4 text-gray-600">Listings will appear here.</p>
-  </div>
-);
-
-const Dashboard = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-    <p className="mt-4 text-gray-600">Your dashboard statistics.</p>
-  </div>
-);
-
-const MyListings = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">My Listings</h1>
-    <p className="mt-4 text-gray-600">Your listings will appear here.</p>
-  </div>
-);
-
-const Settings = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-    <p className="mt-4 text-gray-600">Account settings will appear here.</p>
-  </div>
-);
-
 const Unauthorized = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
@@ -56,6 +40,12 @@ const Unauthorized = () => (
       <p className="mt-2 text-gray-600">
         You don't have permission to access this page.
       </p>
+      <button 
+        onClick={() => window.history.back()}
+        className="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
+      >
+        Go Back
+      </button>
     </div>
   </div>
 );
@@ -75,7 +65,7 @@ function App() {
             success: {
               duration: 3000,
               iconTheme: {
-                primary: "#4ade80",
+                primary: "#10b981",
                 secondary: "#fff",
               },
             },
@@ -90,23 +80,59 @@ function App() {
         />
 
         <Routes>
-          {/* Public Routes */}
+          {/* Public Auth Routes - No Layout */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
-
-          {/* Protected Routes with Layout */}
+          
+          {/* Routes with AppLayout */}
           <Route element={<AppLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/listings" element={<ListingPage/>} />
-
-            {/* Protected routes that require authentication */}
+            {/* Public Routes - Accessible by everyone */}
+            <Route path="/" element={<Home />} />
+            <Route path="/listings" element={<Listings />} />
+            <Route path="/cart" element={<Cart />} />
+            
+            {/* Protected Routes - Require Authentication */} 
             <Route element={<ProtectedRoute />}>
-              {/* Add more protected routes here later */}
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/products/add" element={<AddProduct />} />
+              <Route path="/transactions" element={<TransactionHistory />} />
+              <Route path="/profile" element={<Profile />} />
+              {/* Cart is already public above - no need to duplicate */}
+            </Route>
+
+            {/* Vendor Routes - Require Vendor Role */}
+            <Route 
+              element={
+                <ProtectedRoute 
+                  requiredRoles={["vendor_admin", "club_admin", "admin"]}
+                />
+              }
+            >
+              {/* Add vendor routes here when ready */}
+              {/* <Route path="/vendor/dashboard" element={<VendorDashboard />} /> */}
+              {/* <Route path="/vendor/listings" element={<VendorListings />} /> */}
+            </Route>
+
+            {/* Admin Routes - Require Admin/Moderator Role */}
+            <Route 
+              element={
+                <ProtectedRoute 
+                  requiredRoles={["admin", "moderator"]}
+                />
+              }
+            >
+              {/* Add admin routes here when ready */}
+              {/* <Route path="/admin/dashboard" element={<AdminDashboard />} /> */}
+              {/* <Route path="/admin/users" element={<AdminUsers />} /> */}
             </Route>
           </Route>
+
+          {/* Unauthorized Route */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
