@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -8,6 +10,8 @@ import heathcheckRouter from "./routes/healthcheck.route.js";
 import userRouter from "./routes/users.routes.js";
 import listingRouter from "./routes/listing.routes.js";
 import orderRouter from "./routes/order.routes.js"; 
+import authRouter from "./routes/auth.routes.js";
+
 
 const app = express();
 
@@ -33,6 +37,7 @@ app.use("/api/healthcheck", heathcheckRouter);
 app.use("/api/users", userRouter);
 app.use("/api/listings", listingRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/auth", authRouter);
 
 // --- 3. Error Handling (Must be the last middleware) ---
 

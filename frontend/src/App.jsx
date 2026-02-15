@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AppLayout from "./components/layout/AppLayout.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 // Auth Pages
 import Login from "./pages/auth/Login.jsx";
@@ -16,14 +17,11 @@ import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
 import Profile from "./pages/Profile.jsx";
+import ListingPage from "./pages/root/Listings.jsx";
+import HomePage from "./pages/root/Home.jsx";
 
 // Temporary placeholder pages
-const HomePage = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Home Page</h1>
-    <p className="mt-4 text-gray-600">Welcome to Campus Marketplace!</p>
-  </div>
-);
+ 
 
 const BrowseListings = () => (
   <div className="container py-8">
@@ -62,11 +60,12 @@ const Unauthorized = () => (
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Toaster
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+                <Toaster
           position="top-right"
           toastOptions={{
-            duration: 4000,
+            duration: 3000,
             style: {
               background: "#363636",
               color: "#fff",
@@ -74,14 +73,14 @@ function App() {
             success: {
               duration: 3000,
               iconTheme: {
-                primary: "#10B981",
+                primary: "#4ade80",
                 secondary: "#fff",
               },
             },
             error: {
               duration: 4000,
               iconTheme: {
-                primary: "#EF4444",
+                primary: "#ef4444",
                 secondary: "#fff",
               },
             },
@@ -93,14 +92,13 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
-          {/* Protected Routes */}
+          {/* Protected Routes with Layout */}
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/listings" element={<BrowseListings />} />
+            <Route path="/listings" element={<ListingPage/>} />
 
             {/* Authenticated Routes */}
             <Route
@@ -152,7 +150,9 @@ function App() {
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </AuthProvider>
+        </AuthProvider>
+
+      </GoogleOAuthProvider>
     </Router>
   );
 }
