@@ -136,7 +136,7 @@ const Register = () => {
                 onChange={handleChange}
                 error={errors.email}
                 leftIcon={<Mail className="h-4 w-4" />}
-                placeholder="you@example.com"
+                placeholder="you@iitbhilai.ac.in"
                 required
               />
 
