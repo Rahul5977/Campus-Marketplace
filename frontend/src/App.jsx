@@ -16,24 +16,34 @@ import Register from "./pages/auth/Register.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
-import Profile from "./pages/Profile.jsx";
-import ListingPage from "./pages/root/Listings.jsx";
-import HomePage from "./pages/root/Home.jsx";
+
+// Root Pages
+import Home from "./pages/root/Home.jsx";
+import Listings from "./pages/root/Listings.jsx";
+
+// User Pages
+import Cart from "./pages/user/Cart.jsx";
+import Checkout from "./pages/user/Checkout.jsx";
+import AddProduct from "./pages/user/AddProduct.jsx";
+import TransactionHistory from "./pages/user/TransactionHistory.jsx";
+import Profile from "./pages/user/Profile.jsx";
+import Dashboard from "./pages/user/Dashboard.jsx";
 
 // Temporary placeholder pages
- 
-
-const BrowseListings = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Browse Listings</h1>
-    <p className="mt-4 text-gray-600">Listings will appear here.</p>
-  </div>
-);
-
-const Dashboard = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-    <p className="mt-4 text-gray-600">Your dashboard statistics.</p>
+const Unauthorized = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-4xl font-bold text-gray-900">403</h1>
+      <p className="mt-2 text-gray-600">
+        You don't have permission to access this page.
+      </p>
+      <button 
+        onClick={() => window.history.back()}
+        className="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
+      >
+        Go Back
+      </button>
+    </div>
   </div>
 );
 
@@ -44,114 +54,99 @@ const MyListings = () => (
   </div>
 );
 
-
-
-const Unauthorized = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-gray-900">403</h1>
-      <p className="mt-2 text-gray-600">
-        You don't have permission to access this page.
-      </p>
-    </div>
-  </div>
-);
-
 function App() {
   return (
     <Router>
-        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <AuthProvider>
-                <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: "#363636",
-              color: "#fff",
-            },
-            success: {
+          <Toaster
+            position="top-right"
+            toastOptions={{
               duration: 3000,
-              iconTheme: {
-                primary: "#4ade80",
-                secondary: "#fff",
+              style: {
+                background: "#363636",
+                color: "#fff",
               },
-            },
-            error: {
-              duration: 4000,
-              iconTheme: {
-                primary: "#ef4444",
-                secondary: "#fff",
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: "#10b981",
+                  secondary: "#fff",
+                },
               },
-            },
-          }}
-        />
+              error: {
+                duration: 4000,
+                iconTheme: {
+                  primary: "#ef4444",
+                  secondary: "#fff",
+                },
+              },
+            }}
+          />
 
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Routes>
+            {/* Public Auth Routes - No Layout */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
+            
+            {/* Routes with AppLayout */}
+            <Route element={<AppLayout />}>
+              {/* Public Routes - Accessible by everyone */}
+              <Route path="/" element={<Home />} />
+              <Route path="/listings" element={<Listings />} />
+              <Route path="/cart" element={<Cart />} />
+              
+              {/* Protected Routes - Require Authentication */} 
+              <Route element={<ProtectedRoute />}>
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/my-listings" element={<MyListings />} />
+                <Route path="/products/add" element={<AddProduct />} />
+                <Route path="/transactions" element={<TransactionHistory />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Navigate to="/profile" replace />} />
+              </Route>
 
-          {/* Protected Routes with Layout */}
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/listings" element={<ListingPage/>} />
+              {/* Admin Routes - Require Admin/Moderator Role */}
+              <Route 
+                element={
+                  <ProtectedRoute 
+                    requiredRoles={["admin", "moderator"]}
+                  />
+                }
+              >
+                <Route 
+                  path="/admin/*" 
+                  element={
+                    <div className="container py-8">
+                      <h1 className="text-3xl font-bold">Admin Panel</h1>
+                    </div>
+                  } 
+                />
+              </Route>
 
-            {/* Authenticated Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/my-listings"
-              element={
-                <ProtectedRoute>
-                  <MyListings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Navigate to="/profile" replace />
-                </ProtectedRoute>
-              }
-            />
+              {/* Vendor Routes - Require Vendor Role */}
+              <Route 
+                element={
+                  <ProtectedRoute 
+                    requiredRoles={["vendor_admin", "club_admin", "admin"]}
+                  />
+                }
+              >
+                {/* Add vendor routes here when ready */}
+              </Route>
+            </Route>
 
-            {/* Admin Only Routes */}
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute requiredRoles={["admin", "moderator"]}>
-                  <div className="container py-8">
-                    <h1 className="text-3xl font-bold">Admin Panel</h1>
-                  </div>
-                </ProtectedRoute>
-              }
-            />
-          </Route>
+            {/* Unauthorized Route */}
+            <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Catch all - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            {/* Catch all - redirect to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </AuthProvider>
-
       </GoogleOAuthProvider>
     </Router>
   );

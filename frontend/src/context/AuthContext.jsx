@@ -1,9 +1,24 @@
 import { createContext, useState, useEffect, useCallback } from "react";
 import authService from "../services/authService.js";
 import { tokenManager } from "../utils/tokenManager.js";
-import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext(null);
+
+// TEMPORARY: Set to true for testing, false for production
+const TESTING_MODE = true;
+
+// Mock user for testing
+const mockUser = {
+  id: "12345",
+  name: "Test Student",
+  email: "student@iitbhilai.ac.in",
+  roles: ["student", "user"],
+  verified: true,
+  institute: "IIT Bhilai",
+  studentId: "2024CS123",
+  hostel: "Hostel B",
+  avatar: "/api/placeholder/100/100"
+};
 
 /**
  * AuthProvider Component
@@ -26,6 +41,14 @@ export const AuthProvider = ({ children }) => {
    */
   const checkAuth = async () => {
     try {
+      if (TESTING_MODE) {
+        // Auto-login for testing
+        setUser(mockUser);
+        setIsAuthenticated(true);
+        setLoading(false);
+        return;
+      }
+
       const token = tokenManager.getToken();
       const storedUser = tokenManager.getUser();
 
@@ -38,7 +61,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Auth check failed:", error);
-      tokenManager.clearAuth();
+      if (!TESTING_MODE) {
+        tokenManager.clearAuth();
+      }
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -52,6 +77,18 @@ export const AuthProvider = ({ children }) => {
    */
   const login = async (credentials) => {
     try {
+      if (TESTING_MODE) {
+        // Mock successful login
+        setUser(mockUser);
+        setIsAuthenticated(true);
+        return { 
+          data: { 
+            user: mockUser,
+            token: "mock-token-12345" 
+          } 
+        };
+      }
+
       const response = await authService.login(credentials);
       setUser(response.data.user);
       setIsAuthenticated(true);
@@ -67,6 +104,23 @@ export const AuthProvider = ({ children }) => {
    */
   const register = async (userData) => {
     try {
+      if (TESTING_MODE) {
+        // Mock successful registration
+        const newUser = {
+          ...mockUser,
+          ...userData,
+          id: "67890",
+        };
+        setUser(newUser);
+        setIsAuthenticated(true);
+        return { 
+          data: { 
+            user: newUser,
+            token: "mock-token-67890" 
+          } 
+        };
+      }
+
       const response = await authService.register(userData);
       return response;
     } catch (error) {
@@ -79,11 +133,15 @@ export const AuthProvider = ({ children }) => {
    */
   const logout = async () => {
     try {
-      await authService.logout();
+      if (!TESTING_MODE) {
+        await authService.logout();
+      }
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      tokenManager.clearAuth();
+      if (!TESTING_MODE) {
+        tokenManager.clearAuth();
+      }
       setUser(null);
       setIsAuthenticated(false);
     }
@@ -95,7 +153,9 @@ export const AuthProvider = ({ children }) => {
    */
   const updateUser = (userData) => {
     setUser(userData);
-    tokenManager.setUser(userData);
+    if (!TESTING_MODE) {
+      tokenManager.setUser(userData);
+    }
   };
 
   /**
@@ -145,6 +205,26 @@ export const AuthProvider = ({ children }) => {
     return hasAnyRole(["admin", "moderator"]);
   }, [hasAnyRole]);
 
+  /**
+   * Refresh user data from server
+   */
+  const refreshUser = async () => {
+    try {
+      if (TESTING_MODE) {
+        // Just return mock user in testing mode
+        return mockUser;
+      }
+
+      const response = await authService.getCurrentUser();
+      setUser(response.data.user);
+      tokenManager.setUser(response.data.user);
+      return response.data.user;
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -153,11 +233,14 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateUser,
+    refreshUser,
     checkAuth,
     hasRole,
     hasAnyRole,
     canCreateListing,
     isAdminOrModerator,
+    // Helper for testing
+    isTestMode: TESTING_MODE,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

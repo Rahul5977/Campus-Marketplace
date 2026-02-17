@@ -30,8 +30,7 @@ const handleGoogleLogin = async (credentialResponse) => {
 };
 
   // Get the page user was trying to access
-  const from = location.state?.from?.pathname || "/";
-
+const from = location.state?.from?.pathname || location.state?.from || "/";
   /**
    * Validate login form
    */
