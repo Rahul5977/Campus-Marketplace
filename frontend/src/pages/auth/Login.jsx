@@ -51,16 +51,19 @@ const handleGoogleLogin = async (credentialResponse) => {
   /**
    * Handle login submission
    */
+
   const handleLogin = async (values) => {
     try {
       await login(values);
       toast.success("Login successful!");
       navigate(from, { replace: true });
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Login failed. Please try again.";
+      // Get the specific message from the backend error response
+      const errorMessage = error.response?.data?.message || "Invalid email or password.";
       toast.error(errorMessage);
-      throw error;
+      
+      // We throw the error so that useForm sets it in the 'errors' state
+      throw error; 
     }
   };
 
@@ -203,11 +206,13 @@ const handleGoogleLogin = async (credentialResponse) => {
           )}
 
           {/* Submit Button */}
+          
           <Button
             type="submit"
-            className="w-full"
+            className="w-full mt-6" // Added margin top for better look
             isLoading={isSubmitting}
             disabled={isSubmitting}
+            variant="default" // Explicitly set the variant
           >
             {isSubmitting ? "Signing in..." : "Sign in"}
           </Button>

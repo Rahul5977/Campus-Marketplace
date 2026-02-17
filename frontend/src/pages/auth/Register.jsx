@@ -48,12 +48,12 @@ const Register = () => {
     try {
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...userData } = values;
-
       await register(userData);
 
       toast.success(
         "Registration successful! Please check your email to verify your account."
       );
+      
       navigate("/login");
     } catch (error) {
       const errorMessage =
@@ -101,145 +101,95 @@ const Register = () => {
           </div>
 
           {/* Registration Form */}
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    name="name"
-                    type="text"
-                    value={values.name}
-                    onChange={handleChange}
-                    placeholder="John Doe"
-                    required
-                    className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-colors"
-                  />
-                </div>
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                )}
-              </div>
+              <Input
+                label="Full Name"
+                name="name"
+                type="text"
+                value={values.name}
+                onChange={handleChange}
+                error={errors.name}
+                leftIcon={<User className="h-4 w-4" />}
+                placeholder="John Doe"
+                required
+              />
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Username
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    name="username"
-                    type="text"
-                    value={values.username}
-                    onChange={handleChange}
-                    placeholder="johndoe"
-                    required
-                    className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-colors"
-                  />
-                </div>
-                {errors.username ? (
-                  <p className="mt-1 text-sm text-red-600">{errors.username}</p>
-                ) : (
-                  <p className="mt-1 text-xs text-gray-500">
-                    Letters, numbers, and underscores only
-                  </p>
-                )}
-              </div>
+              <Input
+                label="Username"
+                name="username"
+                type="text"
+                value={values.username}
+                onChange={handleChange}
+                error={errors.username}
+                leftIcon={<User className="h-4 w-4" />}
+                placeholder="johndoe"
+                helperText="Letters, numbers, and underscores only"
+                required
+              />
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    name="email"
-                    type="email"
-                    value={values.email}
-                    onChange={handleChange}
-                    placeholder="you@example.com"
-                    required
-                    className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-colors"
-                  />
-                </div>
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
-              </div>
+              <Input
+                label="Email Address"
+                name="email"
+                type="email"
+                value={values.email}
+                onChange={handleChange}
+                error={errors.email}
+                leftIcon={<Mail className="h-4 w-4" />}
+                placeholder="you@iitbhilai.ac.in"
+                required
+              />
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={values.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    required
-                    className="w-full pl-11 pr-11 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-colors"
-                  />
+              <Input
+                label="Password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={values.password}
+                onChange={handleChange}
+                error={errors.password}
+                leftIcon={<Lock className="h-4 w-4" />}
+                rightIcon={
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="cursor-pointer bg-transparent hover:bg-transparent border-0 p-1 focus:ring-0"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
+                      <EyeOff className="h-4 w-4 text-gray-500 hover:text-gray-700" />
                     ) : (
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-4 w-4 text-gray-500 hover:text-gray-700" />
                     )}
                   </button>
-                </div>
-                {errors.password ? (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                ) : (
-                  <p className="mt-1 text-xs text-gray-500">
-                    Min. 8 characters with uppercase, lowercase, number, and
-                    special character
-                  </p>
-                )}
-              </div>
+                }
+                placeholder="enter password"
+                helperText="Min. 8 characters with uppercase, lowercase, number, and special character"
+                required
+              />
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={values.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    required
-                    className="w-full pl-11 pr-11 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-colors"
-                  />
+              <Input
+                label="Confirm Password"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={values.confirmPassword}
+                onChange={handleChange}
+                error={errors.confirmPassword}
+                leftIcon={<Lock className="h-4 w-4" />}
+                rightIcon={
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="cursor-pointer bg-transparent hover:bg-transparent border-0 p-1 focus:ring-0"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5" />
+                      <EyeOff className="h-4 w-4 text-gray-500 hover:text-gray-700" />
                     ) : (
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-4 w-4 text-gray-500 hover:text-gray-700" />
                     )}
                   </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.confirmPassword}
-                  </p>
-                )}
-              </div>
+                }
+                placeholder="enter password"
+                required
+              />
             </div>
 
             {/* Submit Error */}

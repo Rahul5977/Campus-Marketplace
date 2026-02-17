@@ -16,6 +16,7 @@ import Register from "./pages/auth/Register.jsx";
 import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import VerifyEmail from "./pages/auth/VerifyEmail.jsx";
+import Profile from "./pages/Profile.jsx";
 import ListingPage from "./pages/root/Listings.jsx";
 import HomePage from "./pages/root/Home.jsx";
 
@@ -43,12 +44,7 @@ const MyListings = () => (
   </div>
 );
 
-const Settings = () => (
-  <div className="container py-8">
-    <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-    <p className="mt-4 text-gray-600">Account settings will appear here.</p>
-  </div>
-);
+
 
 const Unauthorized = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -104,10 +100,51 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/listings" element={<ListingPage/>} />
 
-            {/* Protected routes that require authentication */}
-            <Route element={<ProtectedRoute />}>
-              {/* Add more protected routes here later */}
-            </Route>
+            {/* Authenticated Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-listings"
+              element={
+                <ProtectedRoute>
+                  <MyListings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Navigate to="/profile" replace />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Only Routes */}
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute requiredRoles={["admin", "moderator"]}>
+                  <div className="container py-8">
+                    <h1 className="text-3xl font-bold">Admin Panel</h1>
+                  </div>
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Catch all - redirect to home */}

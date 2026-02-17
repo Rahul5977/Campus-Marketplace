@@ -1,4 +1,4 @@
-//Axios instance with interceptors
+// frontend/src/services/api.js
 
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -25,9 +25,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 //handles token refresh on 401 responses
@@ -71,6 +69,7 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );
