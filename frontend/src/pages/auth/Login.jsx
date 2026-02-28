@@ -191,16 +191,16 @@ const Login = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
 
             {/* Divider */}
             <div className="flex items-center my-4">
-              <div className="flex-grow border-t border-gray-200"></div>
+              <div className="grow border-t border-gray-200"></div>
               <span className="mx-4 text-gray-400 text-sm">OR</span>
-              <div className="flex-grow border-t border-gray-200"></div>
+              <div className="grow border-t border-gray-200"></div>
             </div>
 
             {/* Google Login */}
